@@ -2,16 +2,34 @@ export default class Nacht3D {
     constructor({ libs }) {
         this.libs = libs;
     }
-    Mesh() {
+    create(params) {
         const { THREE } = this.libs;
-        return new THREE.Mesh();
-    }
-    Cube(size) {
-        const { THREE } = this.libs;
-        return new THREE.BoxGeometry(...size);
-    }
-    Lambert() {
-        const { THREE } = this.libs;
-        return new THREE.MeshLambertMaterial();
+        switch (params.kind) {
+            case 'mesh':
+                return new THREE.Mesh();
+            case 'cube':
+                return new THREE.BoxGeometry(...params.size);
+            case 'lambert':
+                return new THREE.MeshLambertMaterial();
+        }
     }
 };
+
+export function Mesh() {
+    return {
+        kind: 'mesh'
+    };
+}
+
+export function Cube(size) {
+    return {
+        kind: 'cube',
+        size,
+    };
+}
+
+export function Lambert() {
+    return {
+        kind: 'lambert',
+    };
+}

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 
 import * as THREE from 'three';
-import Nacht3D from './src/index.js';
+import Nacht3D, { Mesh, Cube, Lambert } from './src/index.js';
 
 function initTest() {
     return {
@@ -11,17 +11,17 @@ function initTest() {
         }),
     }
 }
-test('n3d.Mesh()', () => {
+test('Mesh()', () => {
     const { n3d } = initTest();
-    const mesh = n3d.Mesh();
+    const mesh = n3d.create(Mesh());
     assert.strictEqual(mesh.isMesh, true);
     assert.strictEqual(!!mesh.geometry, true);
     assert.strictEqual(!!mesh.material, true);
 });
 
-test('n3d.Cube()', () => {
+test('Cube()', () => {
     const { n3d } = initTest();
-    const geom = n3d.Cube([2, 1, 0.5]);
+    const geom = n3d.create(Cube([2, 1, 0.5]));
 
     assert.strictEqual(geom.isBufferGeometry, true);
     assert.strictEqual(geom.type, 'BoxGeometry');
@@ -35,9 +35,9 @@ test('n3d.Cube()', () => {
     });
 });
 
-test('n3d.Lambert()', () => {
+test('Lambert()', () => {
     const { n3d } = initTest();
-    const mat = n3d.Lambert();
+    const mat = n3d.create(Lambert());
     assert.strictEqual(mat.isMaterial, true);
     assert.strictEqual(mat.type, 'MeshLambertMaterial');
 });
