@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 
 import * as THREE from 'three';
-import Nacht3D, { Mesh, Cube, Lambert } from './src/index.js';
+import Nacht3D, { Mesh, Cube, Lambert, Scene } from './src/index.js';
 
 function initTest() {
     return {
@@ -13,10 +13,11 @@ function initTest() {
 }
 test('Mesh()', () => {
     const { n3d } = initTest();
-    const mesh = n3d.create(Mesh());
+    const mesh = n3d.create(Mesh(null, null, [-10, -20, 30]));
     assert.strictEqual(mesh.isMesh, true);
     assert.strictEqual(!!mesh.geometry, true);
     assert.strictEqual(!!mesh.material, true);
+    assert.deepStrictEqual(mesh.position, new THREE.Vector3(-10, -20, 30));
 });
 
 test('Cube()', () => {
@@ -40,4 +41,34 @@ test('Lambert()', () => {
     const mat = n3d.create(Lambert());
     assert.strictEqual(mat.isMaterial, true);
     assert.strictEqual(mat.type, 'MeshLambertMaterial');
+});
+
+test('Scene()', () => {
+    const { n3d } = initTest();
+    const scene = n3d.create(Scene([
+        Mesh(Cube([2, 3, 0.5]), Lambert(), [1, 2, 3]),
+        Mesh(Cube([2.1, 3.1, 1.5]), Lambert(), [4, 5, 6]),
+    ]));
+
+    assert.strictEqual(scene.children.length, 2);
+    assert.strictEqual(scene.children[0].isObject3D, true);
+    assert.deepStrictEqual(scene.children[0].position, new THREE.Vector3(1, 2, 3));
+
+    assert.strictEqual(scene.children[0].geometry.type, 'BoxGeometry');
+    assert.deepStrictEqual(scene.children[0].geometry.parameters, {
+        width: 2, height: 3, depth: 0.5, widthSegments: 1, heightSegments: 1, depthSegments: 1
+    });
+
+    assert.strictEqual(scene.children[1].isObject3D, true);
+    assert.deepStrictEqual(scene.children[1].position, new THREE.Vector3(4, 5, 6));
+
+    assert.strictEqual(scene.children[1].geometry.type, 'BoxGeometry');
+    assert.deepStrictEqual(scene.children[1].geometry.parameters, {
+        width: 2.1, height: 3.1, depth: 1.5, widthSegments: 1, heightSegments: 1, depthSegments: 1
+    });
+
+    assert.strictEqual(scene.children[0].material.type, 'MeshLambertMaterial');
+    assert.strictEqual(scene.children[1].material.type, 'MeshLambertMaterial');
+
+    assert.strictEqual(scene.type, 'Scene');
 });
