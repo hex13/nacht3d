@@ -30,6 +30,15 @@ export default class Nacht3D {
             }
         }
     }
+    update(object, params) {
+        for (const k in params) {
+            switch (k) {
+                case 'position':
+                    object.position.set(...params[k]);
+                    break;
+            }
+        }
+    }
 };
 
 export function Mesh(geometry, material, position) {
