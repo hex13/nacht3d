@@ -19,6 +19,8 @@ export default class Nacht3D {
             }
             case 'cube':
                 return new THREE.BoxGeometry(...params.size);
+            case 'sphere':
+                return new THREE.SphereGeometry(params.radius, params.widthSegments, params.heightSegments);
             case 'lambert':
                 return new THREE.MeshLambertMaterial();
             case 'scene': {
@@ -54,6 +56,16 @@ export function Cube(size = [1, 1, 1]) {
     return {
         kind: 'cube',
         size,
+    };
+}
+
+
+export function Sphere(radius = 1, widthSegments, heightSegments) {
+    return {
+        kind: 'sphere',
+        radius,
+        widthSegments,
+        heightSegments,
     };
 }
 

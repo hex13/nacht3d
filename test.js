@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 
 import * as THREE from 'three';
-import Nacht3D, { Mesh, Cube, Lambert, Scene } from './src/index.js';
+import Nacht3D, { Mesh, Cube, Sphere, Lambert, Scene } from './src/index.js';
 
 function initTest() {
     return {
@@ -34,6 +34,17 @@ test('Cube()', () => {
         heightSegments: 1,
         depthSegments: 1,
     });
+});
+
+test('Sphere()', () => {
+    const { n3d } = initTest();
+    const geom = n3d.create(Sphere(3, 4, 5));
+
+    assert.strictEqual(geom.isBufferGeometry, true);
+    assert.strictEqual(geom.type, 'SphereGeometry');
+    assert.strictEqual(geom.parameters.radius, 3);
+    assert.strictEqual(geom.parameters.widthSegments, 4);
+    assert.strictEqual(geom.parameters.heightSegments, 5);
 });
 
 test('Lambert()', () => {
