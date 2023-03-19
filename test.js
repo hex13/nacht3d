@@ -88,9 +88,10 @@ test('update position', () => {
     const { n3d } = initTest();
     const mesh = n3d.create(Mesh(null, null, [0, 0, 0]));
     assert.deepStrictEqual(mesh.position, new THREE.Vector3(0, 0, 0))
-    n3d.update(mesh, {
+    const updatedMesh = n3d.update(mesh, {
         position: [3, 2.5, 1.5],
-    })
+    });
+    assert.strictEqual(updatedMesh, mesh);
     assert.deepStrictEqual(mesh.position, new THREE.Vector3(3, 2.5, 1.5))
 });
 

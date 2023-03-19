@@ -47,6 +47,7 @@ export default class Nacht3D {
         if (shouldRecreate) {
             return this.create(params);
         }
+        return object;
     }
 };
 
