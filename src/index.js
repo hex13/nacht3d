@@ -33,12 +33,19 @@ export default class Nacht3D {
         }
     }
     update(object, params) {
-        for (const k in params) {
+        let shouldRecreate = false;
+        outer: for (const k in params) {
             switch (k) {
                 case 'position':
                     object.position.set(...params[k]);
                     break;
+                case 'kind':
+                    shouldRecreate = true;
+                    break outer;
             }
+        }
+        if (shouldRecreate) {
+            return this.create(params);
         }
     }
 };

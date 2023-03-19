@@ -84,7 +84,7 @@ test('Scene()', () => {
     assert.strictEqual(scene.type, 'Scene');
 });
 
-test('update()', () => {
+test('update position', () => {
     const { n3d } = initTest();
     const mesh = n3d.create(Mesh(null, null, [0, 0, 0]));
     assert.deepStrictEqual(mesh.position, new THREE.Vector3(0, 0, 0))
@@ -92,4 +92,19 @@ test('update()', () => {
         position: [3, 2.5, 1.5],
     })
     assert.deepStrictEqual(mesh.position, new THREE.Vector3(3, 2.5, 1.5))
+});
+
+
+test('update kind: should recreate object', () => {
+    const { n3d } = initTest();
+    let geometry = n3d.create(Cube());
+    assert.strictEqual(geometry.type, 'BoxGeometry');
+
+    const oldGeometry = geometry;
+    geometry = n3d.update(geometry, {
+        kind: 'sphere'
+    });
+    assert.notStrictEqual(oldGeometry, geometry);
+    assert.strictEqual(geometry.type, 'SphereGeometry');
+    assert.strictEqual('radius' in geometry.parameters, true);
 });
