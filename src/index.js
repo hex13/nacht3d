@@ -16,6 +16,44 @@ class Manipulator {
     }
 }
 
+export function createThreeObject(THREE, params) {
+    const create = (params) => createThreeObject(THREE, params);
+    switch (params.kind) {
+        case 'mesh': {
+            const mesh = new THREE.Mesh();
+            if (params.geometry) {
+                mesh.geometry = create(params.geometry);
+            }
+            if (params.material) {
+                mesh.material = create(params.material);
+            }
+
+            mesh.position.set(...params.position);
+            return mesh;
+        }
+        case 'cube':
+            return new THREE.BoxGeometry(...params.size);
+        case 'sphere':
+            return new THREE.SphereGeometry(params.radius, params.widthSegments, params.heightSegments);
+        case 'material': {
+            switch (params.materialKind) {
+                case 'lambert':
+                    return new THREE.MeshLambertMaterial({ color: new THREE.Color(...params.color) });
+                case 'basic':
+                    return new THREE.MeshBasicMaterial({ color: new THREE.Color(...params.color) });
+            }
+            break;
+        }
+        case 'scene': {
+            const scene = new THREE.Scene();
+            params.children.forEach(child => {
+                scene.add(create(child));
+            })
+            return scene;
+        }
+    }
+}
+
 export default class Nacht3D {
     constructor({ libs }) {
         this.libs = libs;
@@ -28,41 +66,7 @@ export default class Nacht3D {
         return new Manipulator(this, selector);
     }
     create(params) {
-        const { THREE } = this.libs;
-        switch (params.kind) {
-            case 'mesh': {
-                const mesh = new THREE.Mesh();
-                if (params.geometry) {
-                    mesh.geometry = this.create(params.geometry);
-                }
-                if (params.material) {
-                    mesh.material = this.create(params.material);
-                }
-
-                mesh.position.set(...params.position);
-                return mesh;
-            }
-            case 'cube':
-                return new THREE.BoxGeometry(...params.size);
-            case 'sphere':
-                return new THREE.SphereGeometry(params.radius, params.widthSegments, params.heightSegments);
-            case 'material': {
-                switch (params.materialKind) {
-                    case 'lambert':
-                        return new THREE.MeshLambertMaterial({ color: new THREE.Color(...params.color) });
-                    case 'basic':
-                        return new THREE.MeshBasicMaterial({ color: new THREE.Color(...params.color) });
-                }
-                break;
-            }
-            case 'scene': {
-                const scene = new THREE.Scene();
-                params.children.forEach(child => {
-                    scene.add(this.create(child));
-                })
-                return scene;
-            }
-        }
+        return createThreeObject(this.libs.THREE, params);
     }
     update(object, params) {
         for (const k in params) {
