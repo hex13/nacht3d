@@ -9,6 +9,7 @@
   "author": "= <=>",
   "license": "MIT",
   "devDependencies": {
+    "esbuild": "^0.17.12",
     "three": "^0.150.1"
   },
   "type": "module"
