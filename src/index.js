@@ -53,25 +53,30 @@ export function createThreeObject(THREE, params) {
         }
     }
 }
-
-export default class Nacht3D {
-    constructor({ libs }) {
-        this.libs = libs;
-        this.updaters = {
+export function ThreeController(THREE) {
+    return {
+        create: (params) => createThreeObject(THREE, params),
+        updaters: {
             position: (object, v) => object.position.set(...v),
             color: (object, v) => object.color.setRGB(...v),
-        };
+        },
+    };
+}
+export default class Nacht3D {
+    constructor({ controller }) {
+        this.controller = controller;
     }
     find(selector) {
         return new Manipulator(this, selector);
     }
     create(params) {
-        return createThreeObject(this.libs.THREE, params);
+        return this.controller.create(params);
     }
     update(object, params) {
+        const { updaters } = this.controller;
         for (const k in params) {
-            if (Object.hasOwn(this.updaters, k)) {
-                this.updaters[k](object, params[k]);
+            if (Object.hasOwn(updaters, k)) {
+                updaters[k](object, params[k]);
             } else return this.create(params);
         }
         return object;

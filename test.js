@@ -1,13 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert';
-
 import * as THREE from 'three';
-import Nacht3D, { Mesh, Cube, Sphere, Scene, Material } from './src/index.js';
+import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController } from './src/index.js';
 
 function initTest() {
     return {
         n3d: new Nacht3D({
-            libs: { THREE },
+            controller: new ThreeController(THREE),
         }),
     }
 }
