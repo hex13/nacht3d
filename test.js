@@ -49,9 +49,10 @@ test('Sphere()', () => {
 
 test('Lambert()', () => {
     const { n3d } = initTest();
-    const mat = n3d.create(Lambert());
+    const mat = n3d.create(Lambert([0.91, 0.5, 0.2]));
     assert.strictEqual(mat.isMaterial, true);
     assert.strictEqual(mat.type, 'MeshLambertMaterial');
+    assert.deepStrictEqual(mat.color, new THREE.Color(0.91, 0.5, 0.2));
 });
 
 test('Scene()', () => {
@@ -93,6 +94,18 @@ test('update position', () => {
     });
     assert.strictEqual(updatedMesh, mesh);
     assert.deepStrictEqual(mesh.position, new THREE.Vector3(3, 2.5, 1.5))
+});
+
+test('update color of material', () => {
+    const { n3d } = initTest();
+    const expectedColor = [0.6, 0.7, 0.8];
+    const material = n3d.create(Lambert());
+    assert.notDeepStrictEqual(material.color, new THREE.Color(...expectedColor));
+    const updated = n3d.update(material, {
+        color: [...expectedColor],
+    });
+    assert.strictEqual(updated, material);
+    assert.deepStrictEqual(updated.color, new THREE.Color(...expectedColor));
 });
 
 

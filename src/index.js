@@ -43,7 +43,7 @@ export default class Nacht3D {
             case 'sphere':
                 return new THREE.SphereGeometry(params.radius, params.widthSegments, params.heightSegments);
             case 'lambert':
-                return new THREE.MeshLambertMaterial();
+                return new THREE.MeshLambertMaterial({ color: new THREE.Color(...params.color) });
             case 'scene': {
                 const scene = new THREE.Scene();
                 params.children.forEach(child => {
@@ -63,6 +63,9 @@ export default class Nacht3D {
                 case 'kind':
                     shouldRecreate = true;
                     break outer;
+                case 'color':
+                    object.color.setRGB(...params[k]);
+                    break;
             }
         }
         if (shouldRecreate) {
@@ -98,9 +101,10 @@ export function Sphere(radius = 1, widthSegments, heightSegments) {
     };
 }
 
-export function Lambert() {
+export function Lambert(color = [1, 1, 1]) {
     return {
         kind: 'lambert',
+        color,
     };
 }
 
