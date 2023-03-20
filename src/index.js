@@ -42,8 +42,15 @@ export default class Nacht3D {
                 return new THREE.BoxGeometry(...params.size);
             case 'sphere':
                 return new THREE.SphereGeometry(params.radius, params.widthSegments, params.heightSegments);
-            case 'lambert':
-                return new THREE.MeshLambertMaterial({ color: new THREE.Color(...params.color) });
+            case 'material': {
+                switch (params.materialKind) {
+                    case 'lambert':
+                        return new THREE.MeshLambertMaterial({ color: new THREE.Color(...params.color) });
+                    case 'basic':
+                        return new THREE.MeshBasicMaterial({ color: new THREE.Color(...params.color) });
+                }
+                break;
+            }
             case 'scene': {
                 const scene = new THREE.Scene();
                 params.children.forEach(child => {
@@ -101,9 +108,10 @@ export function Sphere(radius = 1, widthSegments, heightSegments) {
     };
 }
 
-export function Lambert(color = [1, 1, 1]) {
+export function Material(materialKind, color = [1, 1, 1]) {
     return {
-        kind: 'lambert',
+        kind: 'material',
+        materialKind,
         color,
     };
 }

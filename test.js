@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 
 import * as THREE from 'three';
-import Nacht3D, { Mesh, Cube, Sphere, Lambert, Scene } from './src/index.js';
+import Nacht3D, { Mesh, Cube, Sphere, Scene, Material } from './src/index.js';
 
 function initTest() {
     return {
@@ -47,19 +47,27 @@ test('Sphere()', () => {
     assert.strictEqual(geom.parameters.heightSegments, 5);
 });
 
-test('Lambert()', () => {
+test('lambert material', () => {
     const { n3d } = initTest();
-    const mat = n3d.create(Lambert([0.91, 0.5, 0.2]));
+    const mat = n3d.create(Material('lambert', [0.91, 0.5, 0.2]));
     assert.strictEqual(mat.isMaterial, true);
     assert.strictEqual(mat.type, 'MeshLambertMaterial');
+    assert.deepStrictEqual(mat.color, new THREE.Color(0.91, 0.5, 0.2));
+});
+
+test('basic material', () => {
+    const { n3d } = initTest();
+    const mat = n3d.create(Material('basic', [0.91, 0.5, 0.2]));
+    assert.strictEqual(mat.isMaterial, true);
+    assert.strictEqual(mat.type, 'MeshBasicMaterial');
     assert.deepStrictEqual(mat.color, new THREE.Color(0.91, 0.5, 0.2));
 });
 
 test('Scene()', () => {
     const { n3d } = initTest();
     const scene = n3d.create(Scene([
-        Mesh(Cube([2, 3, 0.5]), Lambert(), [1, 2, 3]),
-        Mesh(Cube([2.1, 3.1, 1.5]), Lambert(), [4, 5, 6]),
+        Mesh(Cube([2, 3, 0.5]), Material('lambert'), [1, 2, 3]),
+        Mesh(Cube([2.1, 3.1, 1.5]), Material('lambert'), [4, 5, 6]),
     ]));
 
     assert.strictEqual(scene.children.length, 2);
@@ -99,7 +107,7 @@ test('update position', () => {
 test('update color of material', () => {
     const { n3d } = initTest();
     const expectedColor = [0.6, 0.7, 0.8];
-    const material = n3d.create(Lambert());
+    const material = n3d.create(Material('lambert'));
     assert.notDeepStrictEqual(material.color, new THREE.Color(...expectedColor));
     const updated = n3d.update(material, {
         color: [...expectedColor],
