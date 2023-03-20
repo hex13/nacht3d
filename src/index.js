@@ -19,6 +19,10 @@ class Manipulator {
 export default class Nacht3D {
     constructor({ libs }) {
         this.libs = libs;
+        this.updaters = {
+            position: (object, v) => object.position.set(...v),
+            color: (object, v) => object.color.setRGB(...v),
+        };
     }
     find(selector) {
         return new Manipulator(this, selector);
@@ -61,22 +65,10 @@ export default class Nacht3D {
         }
     }
     update(object, params) {
-        let shouldRecreate = false;
-        outer: for (const k in params) {
-            switch (k) {
-                case 'position':
-                    object.position.set(...params[k]);
-                    break;
-                case 'kind':
-                    shouldRecreate = true;
-                    break outer;
-                case 'color':
-                    object.color.setRGB(...params[k]);
-                    break;
-            }
-        }
-        if (shouldRecreate) {
-            return this.create(params);
+        for (const k in params) {
+            if (Object.hasOwn(this.updaters, k)) {
+                this.updaters[k](object, params[k]);
+            } else return this.create(params);
         }
         return object;
     }
