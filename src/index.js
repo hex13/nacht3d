@@ -1,6 +1,27 @@
+class Manipulator {
+    constructor(n3d, selector) {
+        this.selector = selector;
+        this.n3d = n3d;
+    }
+    update(params) {
+        let current;
+        this.selector.forEach(item => {
+            if (item.isObject3D) {
+                current = item;
+            } else if (typeof item == 'number') {
+                current = current.children[item];
+            }
+        });
+        const updated = this.n3d.update(current, params);
+    }
+}
+
 export default class Nacht3D {
     constructor({ libs }) {
         this.libs = libs;
+    }
+    find(selector) {
+        return new Manipulator(this, selector);
     }
     create(params) {
         const { THREE } = this.libs;
