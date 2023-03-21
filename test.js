@@ -109,6 +109,9 @@ function createTestController() {
         afterUpdate() {
 
         },
+        getParams(object) {
+            return object;
+        }
     };
 }
 
@@ -129,6 +132,20 @@ test('update (general)', () => {
     assert.notStrictEqual(current, original);
     assert.deepStrictEqual(current, {counter: 19, kind: 'secondCounter'});
 
+});
+
+test('update (with functions)', () => {
+    let current;
+    const n3d = new Nacht3D({
+        controller: createTestController(),
+    });
+    const original = n3d.create({counter: 100});
+    assert.deepStrictEqual(original, {counter: 100});
+    current = n3d.update(original, {counter: (v) => {
+        console.log("XXXXXX", v);
+        return v + 123;
+    }});
+    assert.deepStrictEqual(current, {counter: 223});
 });
 
 test('update position', () => {
