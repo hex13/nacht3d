@@ -106,6 +106,26 @@ export default class Nacht3D {
     }
 };
 
+export class StateManager {
+    constructor(controller) {
+        this.controller = controller || {
+            create: () => {},
+            update: () => {},
+        };
+    }
+    create(params) {
+        return {
+            state: {...params},
+            object: this.controller.create(params),
+        }
+    }
+    update(entity, params) {
+        Object.assign(entity.state, params);
+        this.controller.update(entity, params);
+        return entity;
+    }
+}
+
 export function Mesh(geometry, material, position) {
     return {
         kind: 'mesh',

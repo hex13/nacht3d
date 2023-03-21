@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import * as THREE from 'three';
-import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController } from './src/index.js';
+import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController, StateManager } from './src/index.js';
 
 function initTest() {
     return {
@@ -147,6 +147,56 @@ test('update (with functions)', () => {
     }});
     assert.deepStrictEqual(current, {counter: 223});
 });
+
+
+// this is new implementation which will replace current Nacht3D class
+test('StateManager', () => {
+    const stateManager = new StateManager();
+    let entity = stateManager.create({foo: 9});
+    assert.deepStrictEqual(entity, {
+        object: undefined,
+        state: {foo: 9},
+    });
+    entity = stateManager.update(entity, {foo: 10});
+    assert.deepStrictEqual(entity, {
+        object: undefined,
+        state: {foo: 10},
+    });
+    entity = stateManager.update(entity, {city: 'Warsaw'});
+    assert.deepStrictEqual(entity, {
+        object: undefined,
+        state: {foo: 10, city: 'Warsaw'},
+    });
+});
+
+
+test('StateManager with controller', () => {
+    let events = [];
+    const ctrl = {
+        create(params) {
+            return {kind: params.kind, position: [params.x, params.y]};
+        },
+        update(entity, params) {
+            entity.object = this.create(entity.state);
+            events.push(['update', params]);
+        }
+    };
+    const stateManager = new StateManager(ctrl);
+    let entity = stateManager.create({kind: 'cat', x: 10, y: 20});
+    assert.deepStrictEqual(entity, {
+        object: {kind: 'cat', position: [10, 20]},
+        state: {kind: 'cat', x: 10, y: 20},
+    });
+
+    entity = stateManager.update(entity, {x: 11, y: 22});
+    assert.deepStrictEqual(entity, {
+        object: {kind: 'cat', position: [11, 22]},
+        state: {kind: 'cat', x: 11, y: 22},
+    });
+
+    assert.deepStrictEqual(events, [['update', {x: 11, y: 22}]]);
+});
+
 
 test('update position', () => {
     const { n3d } = initTest();
