@@ -55,11 +55,21 @@ export function createThreeObject(THREE, params) {
 }
 export function ThreeController(THREE) {
     return {
-        create: (params) => createThreeObject(THREE, params),
+        create: (params, previousObject) => {
+            if (previousObject) {
+                params = {...previousObject.userData.nacht3d_params, ...params};
+            }
+            const object = createThreeObject(THREE, params);
+            object.userData.nacht3d_params = params;
+            return object;
+        },
         updaters: {
             position: (object, v) => object.position.set(...v),
             color: (object, v) => object.color.setRGB(...v),
         },
+        afterUpdate(object, params) {
+            object.userData.nacht3d_params = {...object.userData.nacht3d_params, ...params};
+        }
     };
 }
 export default class Nacht3D {
@@ -77,8 +87,9 @@ export default class Nacht3D {
         for (const k in params) {
             if (Object.hasOwn(updaters, k)) {
                 updaters[k](object, params[k]);
-            } else return this.create(params);
+            } else return this.controller.create(params, object);
         }
+        this.controller.afterUpdate(object, params);
         return object;
     }
 };
