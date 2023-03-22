@@ -35,6 +35,12 @@ export function createThreeObject(THREE, params) {
         }
     }
 }
+
+export function updateThreeObject(object, params) {
+    if (params.position) object.position.set(...params.position);
+    if (params.color) object.color.setRGB(...params.color);
+}
+
 export function ThreeController(THREE) {
     return {
         getParams: object => {

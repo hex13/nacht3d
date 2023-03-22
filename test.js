@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import * as THREE from 'three';
-import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController, StateManager } from './src/index.js';
+import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController, StateManager, updateThreeObject } from './src/index.js';
 
 function initTest() {
     return {
@@ -252,3 +252,32 @@ test('update when should recreate object', () => {
 
 });
 
+test('updateThreeObject(), empty update params', () => {
+    const object = {
+        position: new THREE.Vector3(9, 8, 7),
+        color: new THREE.Color(0.2, 0.6, 0.8),
+    }
+    updateThreeObject(object, {});
+    assert.deepStrictEqual(object.position, new THREE.Vector3(9, 8, 7));
+    assert.deepStrictEqual(object.color, new THREE.Color(0.2, 0.6, 0.8));
+});
+
+
+test('updateThreeObject(), position', () => {
+    const object = new THREE.Mesh();
+    updateThreeObject(object, {
+        position: [1.2, 2.3, 4.5],
+    });
+    assert.deepStrictEqual(object.position, new THREE.Vector3(1.2, 2.3, 4.5));
+});
+
+
+test('updateThreeObject(), color', () => {
+    const object = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(0.6, 0.7, 0.8),
+    });
+    updateThreeObject(object, {
+        color: [0.3, 0.2, 0.1],
+    });
+    assert.deepStrictEqual(object.color, new THREE.Color(0.3, 0.2, 0.1));
+});
