@@ -197,6 +197,30 @@ test('StateManager with controller', () => {
     assert.deepStrictEqual(events, [['update', {x: 11, y: 22}]]);
 });
 
+test('StateManager with resolver', () => {
+    const stateManager = new StateManager(null, params => {
+        return Object.fromEntries(Object.entries(params).map(([k, v]) => [k + '!', v + 10]));
+    });
+    const entity = stateManager.create({a: 11, b: 3});
+    assert.deepStrictEqual(entity, {
+        object: undefined,
+        state: {
+            'a!': 21,
+            'b!': 13,
+        },
+    });
+
+    const updated = stateManager.update(entity, {a: 100, b: 200});
+    assert.deepStrictEqual(updated, {
+        object: undefined,
+        state: {
+            'a!': 110,
+            'b!': 210,
+        },
+    });
+
+});
+
 
 test('update position', () => {
     const { n3d } = initTest();

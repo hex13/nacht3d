@@ -92,19 +92,22 @@ export default class Nacht3D {
 };
 
 export class StateManager {
-    constructor(controller) {
+    constructor(controller, resolveParams = x => x) {
         this.controller = controller || {
             create: () => {},
             update: () => {},
         };
+        this.resolveParams = resolveParams;
     }
     create(params) {
+        params = this.resolveParams(params);
         return {
             state: {...params},
             object: this.controller.create(params),
         }
     }
     update(entity, params) {
+        params = this.resolveParams(params);
         Object.assign(entity.state, params);
         this.controller.update(entity, params);
         return entity;
