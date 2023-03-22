@@ -1,21 +1,3 @@
-class Manipulator {
-    constructor(n3d, selector) {
-        this.selector = selector;
-        this.n3d = n3d;
-    }
-    update(params) {
-        let current;
-        this.selector.forEach(item => {
-            if (item.isObject3D) {
-                current = item;
-            } else if (typeof item == 'number') {
-                current = current.children[item];
-            }
-        });
-        const updated = this.n3d.update(current, params);
-    }
-}
-
 export function createThreeObject(THREE, params) {
     const create = (params) => createThreeObject(THREE, params);
     switch (params.kind) {
@@ -86,9 +68,6 @@ export default class Nacht3D {
             return valueDescription(previousValue);
         }
         return valueDescription;
-    }
-    find(selector) {
-        return new Manipulator(this, selector);
     }
     create(params) {
         return this.controller.create(params);

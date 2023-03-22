@@ -252,20 +252,3 @@ test('update when should recreate object', () => {
 
 });
 
-test('find() and update()', () => {
-    const { n3d } = initTest();
-    let a, b;
-    const scene = n3d.create(Scene([
-        Mesh(null, null, [0, 0, 0]),
-        Mesh(null, null, [1, 2, 3]),
-    ]));
-
-    a = scene.children[1];
-    n3d.find([scene, 1]).update({
-        position: [2, 9, 25],
-    });
-    b = scene.children[1];
-    assert.strictEqual(a, b);
-    assert.deepStrictEqual(scene.children[0].position, new THREE.Vector3(0, 0, 0));
-    assert.deepStrictEqual(scene.children[1].position, new THREE.Vector3(2, 9, 25));
-});
