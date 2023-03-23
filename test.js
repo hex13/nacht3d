@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert';
+import { JSDOM } from 'jsdom';
 import * as THREE from 'three';
-import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController, StateManager, updateThreeObject } from './src/index.js';
+import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController, StateManager, updateThreeObject, Resolver } from './src/index.js';
 
 function initTest() {
     return {
@@ -198,7 +199,7 @@ test('StateManager with controller', () => {
 });
 
 test('StateManager with resolver', () => {
-    const stateManager = new StateManager(null, params => {
+    const stateManager = new StateManager(null, (params, prevState) => {
         return Object.fromEntries(Object.entries(params).map(([k, v]) => [k + '!', v + 10]));
     });
     const entity = stateManager.create({a: 11, b: 3});
@@ -218,8 +219,51 @@ test('StateManager with resolver', () => {
             'b!': 210,
         },
     });
-
 });
+
+test('StateManager with resolver - should pass correct arguments to resolver', () => {
+    const events = [];
+    const stateManager = new StateManager(null, (params, prevState) => {
+        events.push(['resolve', params, prevState]);
+    });
+    const entity = stateManager.create({a: 11, b: 3});
+    stateManager.update(entity, {a: 100, b: 200});
+    assert.deepStrictEqual(events, [
+        ['resolve', {a: 11, b: 3}, undefined],
+        ['resolve', {a: 100, b: 200}, {a: 11, b: 3}],
+    ]);
+});
+
+
+
+test('Resolver', () => {
+    const resolver = new Resolver();
+    let state;
+    const createState = () => ({
+        abc: 'kotek',
+        def: 'wlazł na płotek',
+        counter: 1,
+    });
+    state = createState();
+
+    assert.deepStrictEqual(resolver.resolve({}, state), {});
+
+    assert.deepStrictEqual(resolver.resolve({
+        abc: 'piesek',
+    }, state), {abc: 'piesek'});
+
+    assert.deepStrictEqual(resolver.resolve({
+        def: () => 'zrobił hau',
+        counter: () => 100,
+    }, state), {def: 'zrobił hau', counter: 100});
+
+    assert.deepStrictEqual(resolver.resolve({
+        counter: (x) => x + 10,
+    }, state), {counter: 11});
+
+    assert.deepStrictEqual(state, createState());
+});
+
 
 
 test('update position', () => {

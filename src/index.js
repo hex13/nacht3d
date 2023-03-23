@@ -107,10 +107,24 @@ export class StateManager {
         }
     }
     update(entity, params) {
-        params = this.resolveParams(params);
+        params = this.resolveParams(params, entity.state);
         Object.assign(entity.state, params);
         this.controller.update(entity, params);
         return entity;
+    }
+}
+
+export class Resolver {
+    resolve(params, prevState) {
+        const resolvedParams = {};
+        for (const k in params) {
+            let v = params[k];
+            if (typeof v == 'function') {
+                v = v(prevState[k]);
+            }
+            resolvedParams[k] = v;
+        }
+        return resolvedParams;
     }
 }
 
