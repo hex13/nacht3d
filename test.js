@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { JSDOM } from 'jsdom';
 import * as THREE from 'three';
 import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController, StateManager, updateThreeObject, Resolver } from './src/index.js';
 
