@@ -131,14 +131,29 @@ export class StateManager {
 export class Resolver {
     async* resolve(params, prevState) {
         const resolvedParams = {};
+        const propsToAwait = [];
+
         for (const k in params) {
             let v = params[k];
             if (typeof v == 'function') {
                 v = v(prevState[k]);
+                if (v && v[Symbol.asyncIterator]) {
+                    propsToAwait.push([k, v]);
+                    continue;
+                }
             }
             resolvedParams[k] = v;
         }
-        yield resolvedParams;
+
+        if (Object.keys(resolvedParams).length) {
+            yield resolvedParams;
+        }
+
+        for (const [k, gen] of propsToAwait) {
+            for await (const value of gen) {
+                yield {[k]:value}
+            }
+        }
     }
 }
 

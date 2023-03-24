@@ -288,7 +288,7 @@ test('Resolver', async () => {
     });
     state = createState();
 
-    await checkValues({}, state, [{}])
+    await checkValues({}, state, [])
 
     await checkValues({abc: 'piesek'}, state, [{abc: 'piesek'}])
 
@@ -300,6 +300,24 @@ test('Resolver', async () => {
     await checkValues({
         counter: (x) => x + 10,
     }, state, [{counter: 11}]);
+
+
+    await checkValues({
+        counter: async function* (value) {
+            yield value + 1;
+            yield value + 2;
+        },
+    }, {counter: 1000}, [{counter: 1001}, {counter: 1002}]);
+
+    await checkValues({
+        counter: async function* (value) {
+            yield value + 1;
+            yield value + 2;
+        },
+        foo: 123,
+        bar: () => 3,
+    }, {counter: 1000}, [{foo: 123, bar: 3}, {counter: 1001}, {counter: 1002}]);
+
 
     assert.deepStrictEqual(state, createState());
 });
