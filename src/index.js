@@ -117,6 +117,13 @@ export class StateManager {
     }
     update(entity, params) {
         params = this.resolveParams(params, entity.state);
+        if (params && params[Symbol.asyncIterator]) {
+            (async () => {
+                for await (const patch of params) {
+                    this._update(entity, patch);
+                }
+            })();
+        }
         return this._update(entity, params);
     }
 }

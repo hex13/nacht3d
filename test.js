@@ -235,6 +235,25 @@ test('StateManager with resolver - should pass correct arguments to resolver', (
 
 
 
+test('StateManager with resolver - async generators', (done) => {
+    const stateManager = new StateManager(null, async function* (params, prevState) {
+        for (const k in params) {
+            yield {[k]: params[k]}
+        }
+    });
+    const entity = stateManager.create({c: 12, d: 13});
+
+    stateManager.update(entity, {a: 10, b: 11});
+    setTimeout(() => {
+        assert.deepStrictEqual(entity.state, {
+            a: 10,
+            b: 11,
+            c: 12,
+            d: 13,
+        });
+    }, 0);
+});
+
 test('Resolver', () => {
     const resolver = new Resolver();
     let state;
