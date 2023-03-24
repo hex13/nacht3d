@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import * as THREE from 'three';
-import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController, StateManager, updateThreeObject, Resolver } from './src/index.js';
+import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController, StateManager, Resolver,
+    createThreeObject, updateThreeObject,
+} from './src/index.js';
 
 function initTest() {
     return {
@@ -318,6 +320,20 @@ test('update when should recreate object', () => {
 
     }
 
+});
+
+test('createThreeObject(), camera', () => {
+    const camera = createThreeObject(THREE, {
+        kind: 'camera',
+        fov: 46,
+        aspect: 1.5,
+        position: [1, 2, 3],
+    });
+
+    assert.strictEqual(camera instanceof THREE.PerspectiveCamera, true);
+    assert.strictEqual(camera.fov, 46);
+    assert.strictEqual(camera.aspect, 1.5);
+    assert.deepStrictEqual(camera.position, new THREE.Vector3(1, 2, 3));
 });
 
 test('updateThreeObject(), empty update params', () => {

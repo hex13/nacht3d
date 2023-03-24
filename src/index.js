@@ -1,5 +1,6 @@
 export function createThreeObject(THREE, params) {
     const create = (params) => createThreeObject(THREE, params);
+    let object;
     switch (params.kind) {
         case 'mesh': {
             const mesh = new THREE.Mesh();
@@ -33,7 +34,11 @@ export function createThreeObject(THREE, params) {
             })
             return scene;
         }
+        case 'camera':
+            object = new THREE.PerspectiveCamera(params.fov, params.aspect);
     }
+    updateThreeObject(object, params);
+    return object;
 }
 
 export function updateThreeObject(object, params) {
