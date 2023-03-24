@@ -254,7 +254,31 @@ test('StateManager with resolver - async generators', (done) => {
     }, 0);
 });
 
-test('Resolver', () => {
+async function asyncGenToArray(it) {
+    const result = [];
+    for await (const v of it) {
+        result.push(v);
+    }
+    return result;
+}
+
+test('asyncGenToArray helper', async () => {
+    let values;
+    async function* foo() {
+        yield 1;
+        yield 20;
+        yield 31;
+    }
+    values = await asyncGenToArray(foo());
+    assert.deepStrictEqual(values, [1, 20, 31]);
+});
+
+
+test('Resolver', async () => {
+    const sleep = t => new Promise(r => { setTimeout(r, t); });
+    const checkValues = async (params, prevState, expectedValues) => {
+        assert.deepStrictEqual(await asyncGenToArray(resolver.resolve(params, prevState)), expectedValues);
+    };
     const resolver = new Resolver();
     let state;
     const createState = () => ({
@@ -264,20 +288,18 @@ test('Resolver', () => {
     });
     state = createState();
 
-    assert.deepStrictEqual(resolver.resolve({}, state), {});
+    await checkValues({}, state, [{}])
 
-    assert.deepStrictEqual(resolver.resolve({
-        abc: 'piesek',
-    }, state), {abc: 'piesek'});
+    await checkValues({abc: 'piesek'}, state, [{abc: 'piesek'}])
 
-    assert.deepStrictEqual(resolver.resolve({
+    await checkValues({
         def: () => 'zrobił hau',
         counter: () => 100,
-    }, state), {def: 'zrobił hau', counter: 100});
+    }, state, [{def: 'zrobił hau', counter: 100}]);
 
-    assert.deepStrictEqual(resolver.resolve({
+    await checkValues({
         counter: (x) => x + 10,
-    }, state), {counter: 11});
+    }, state, [{counter: 11}]);
 
     assert.deepStrictEqual(state, createState());
 });

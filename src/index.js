@@ -129,7 +129,7 @@ export class StateManager {
 }
 
 export class Resolver {
-    resolve(params, prevState) {
+    async* resolve(params, prevState) {
         const resolvedParams = {};
         for (const k in params) {
             let v = params[k];
@@ -138,7 +138,7 @@ export class Resolver {
             }
             resolvedParams[k] = v;
         }
-        return resolvedParams;
+        yield resolvedParams;
     }
 }
 
