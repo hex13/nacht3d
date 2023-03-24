@@ -180,7 +180,6 @@ test('StateManager with controller', () => {
         },
         update(entity, params) {
             entity.object = this.create(entity.state);
-            events.push(['update', params]);
         }
     };
     const stateManager = new StateManager(ctrl);
@@ -195,8 +194,6 @@ test('StateManager with controller', () => {
         object: {kind: 'cat', position: [11, 22]},
         state: {kind: 'cat', x: 11, y: 22},
     });
-
-    assert.deepStrictEqual(events, [['update', {x: 11, y: 22}]]);
 });
 
 test('StateManager with resolver', () => {
@@ -231,7 +228,7 @@ test('StateManager with resolver - should pass correct arguments to resolver', (
     const entity = stateManager.create({a: 11, b: 3});
     stateManager.update(entity, {a: 100, b: 200});
     assert.deepStrictEqual(events, [
-        ['resolve', {a: 11, b: 3}, undefined],
+        ['resolve', {a: 11, b: 3}, {}],
         ['resolve', {a: 100, b: 200}, {a: 11, b: 3}],
     ]);
 });

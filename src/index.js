@@ -105,17 +105,19 @@ export class StateManager {
         this.resolveParams = resolveParams;
     }
     create(params) {
-        params = this.resolveParams(params);
-        return {
-            state: {...params},
-            object: this.controller.create(params),
+        return this.update({state: {}, object: null}, params);
+    }
+    _update(entity, params) {
+        Object.assign(entity.state, params);
+        if (!entity.object) {
+            entity.object = this.controller.create(params);
         }
+        this.controller.update(entity, params);
+        return entity;
     }
     update(entity, params) {
         params = this.resolveParams(params, entity.state);
-        Object.assign(entity.state, params);
-        this.controller.update(entity, params);
-        return entity;
+        return this._update(entity, params);
     }
 }
 
