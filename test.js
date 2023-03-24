@@ -223,7 +223,8 @@ test('StateManager with resolver', () => {
 test('StateManager with resolver - should pass correct arguments to resolver', () => {
     const events = [];
     const stateManager = new StateManager(null, (params, prevState) => {
-        events.push(['resolve', params, prevState]);
+        events.push(['resolve', params, prevState === undefined? undefined : {...prevState} ]);
+        return params;
     });
     const entity = stateManager.create({a: 11, b: 3});
     stateManager.update(entity, {a: 100, b: 200});
