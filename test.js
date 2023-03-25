@@ -13,8 +13,7 @@ function initTest() {
     }
 }
 test('Mesh()', () => {
-    const { n3d } = initTest();
-    const mesh = n3d.create(Mesh(null, null, [-10, -20, 30]));
+    const mesh = createThreeObject(THREE, Mesh(null, null, [-10, -20, 30]));
     assert.strictEqual(mesh.isMesh, true);
     assert.strictEqual(!!mesh.geometry, true);
     assert.strictEqual(!!mesh.material, true);
@@ -22,8 +21,7 @@ test('Mesh()', () => {
 });
 
 test('Cube()', () => {
-    const { n3d } = initTest();
-    const geom = n3d.create(Cube([2, 1, 0.5]));
+    const geom = createThreeObject(THREE, Cube([2, 1, 0.5]));
 
     assert.strictEqual(geom.isBufferGeometry, true);
     assert.strictEqual(geom.type, 'BoxGeometry');
@@ -38,8 +36,7 @@ test('Cube()', () => {
 });
 
 test('Sphere()', () => {
-    const { n3d } = initTest();
-    const geom = n3d.create(Sphere(3, 4, 5));
+    const geom = createThreeObject(THREE, Sphere(3, 4, 5));
 
     assert.strictEqual(geom.isBufferGeometry, true);
     assert.strictEqual(geom.type, 'SphereGeometry');
@@ -49,24 +46,21 @@ test('Sphere()', () => {
 });
 
 test('lambert material', () => {
-    const { n3d } = initTest();
-    const mat = n3d.create(Material('lambert', [0.91, 0.5, 0.2]));
+    const mat = createThreeObject(THREE, Material('lambert', [0.91, 0.5, 0.2]));
     assert.strictEqual(mat.isMaterial, true);
     assert.strictEqual(mat.type, 'MeshLambertMaterial');
     assert.deepStrictEqual(mat.color, new THREE.Color(0.91, 0.5, 0.2));
 });
 
 test('basic material', () => {
-    const { n3d } = initTest();
-    const mat = n3d.create(Material('basic', [0.91, 0.5, 0.2]));
+    const mat = createThreeObject(THREE, Material('basic', [0.91, 0.5, 0.2]));
     assert.strictEqual(mat.isMaterial, true);
     assert.strictEqual(mat.type, 'MeshBasicMaterial');
     assert.deepStrictEqual(mat.color, new THREE.Color(0.91, 0.5, 0.2));
 });
 
 test('Scene()', () => {
-    const { n3d } = initTest();
-    const scene = n3d.create(Scene([
+    const scene = createThreeObject(THREE, Scene([
         Mesh(Cube([2, 3, 0.5]), Material('lambert'), [1, 2, 3]),
         Mesh(Cube([2.1, 3.1, 1.5]), Material('lambert'), [4, 5, 6]),
     ]));
@@ -144,7 +138,6 @@ test('update (with functions)', () => {
     const original = n3d.create({counter: 100});
     assert.deepStrictEqual(original, {counter: 100});
     current = n3d.update(original, {counter: (v) => {
-        console.log("XXXXXX", v);
         return v + 123;
     }});
     assert.deepStrictEqual(current, {counter: 223});
