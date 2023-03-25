@@ -46,56 +46,6 @@ export function updateThreeObject(object, params) {
     if (params.color) object.color.setRGB(...params.color);
 }
 
-export function ThreeController(THREE) {
-    return {
-        getParams: object => {
-            return object.userData.nacht3d_params || {};
-        },
-        create: (params, previousObject) => {
-            if (previousObject) {
-                params = {...previousObject.userData.nacht3d_params, ...params};
-            }
-            const object = createThreeObject(THREE, params);
-            object.userData.nacht3d_params = params;
-            return object;
-        },
-        updaters: {
-            position: (object, v) => object.position.set(...v),
-            color: (object, v) => object.color.setRGB(...v),
-        },
-        afterUpdate(object, params) {
-            object.userData.nacht3d_params = {...object.userData.nacht3d_params, ...params};
-        }
-    };
-}
-
-
-export default class Nacht3D {
-    constructor({ controller }) {
-        this.controller = controller;
-    }
-    resolveValue(valueDescription, previousValue) {
-        if (typeof valueDescription == 'function') {
-            return valueDescription(previousValue);
-        }
-        return valueDescription;
-    }
-    create(params) {
-        return this.controller.create(params);
-    }
-    update(object, params) {
-        const { updaters } = this.controller;
-        for (const k in params) {
-            if (Object.hasOwn(updaters, k)) {
-                const value = this.resolveValue(params[k], this.controller.getParams(object)[k]);
-                updaters[k](object, value);
-            } else return this.controller.create(params, object);
-        }
-        this.controller.afterUpdate(object, params);
-        return object;
-    }
-};
-
 export class StateManager {
     constructor(controller, resolveParams = x => x) {
         this.controller = controller || {

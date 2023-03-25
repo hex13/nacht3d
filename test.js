@@ -1,17 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import * as THREE from 'three';
-import Nacht3D, { Mesh, Cube, Sphere, Scene, Material, ThreeController, StateManager, Resolver,
+import { Mesh, Cube, Sphere, Scene, Material, StateManager, Resolver,
     createThreeObject, updateThreeObject,
 } from './src/index.js';
 
-function initTest() {
-    return {
-        n3d: new Nacht3D({
-            controller: new ThreeController(THREE),
-        }),
-    }
-}
+
 test('Mesh()', () => {
     const mesh = createThreeObject(THREE, Mesh(null, null, [-10, -20, 30]));
     assert.strictEqual(mesh.isMesh, true);
@@ -111,40 +105,6 @@ function createTestController() {
     };
 }
 
-test('update (general)', () => {
-    let current;
-    const n3d = new Nacht3D({
-        controller: createTestController(),
-    });
-
-    const original = n3d.create({counter: 100, kind: 'firstCounter'});
-    assert.deepStrictEqual(original, {counter: 100, kind: 'firstCounter'});
-
-    current = n3d.update(original, {counter: 19});
-    assert.strictEqual(current, original);
-    assert.deepStrictEqual(current, {counter: 19, kind: 'firstCounter'});
-
-    current = n3d.update(current, {kind: 'secondCounter'});
-    assert.notStrictEqual(current, original);
-    assert.deepStrictEqual(current, {counter: 19, kind: 'secondCounter'});
-
-});
-
-test('update (with functions)', () => {
-    let current;
-    const n3d = new Nacht3D({
-        controller: createTestController(),
-    });
-    const original = n3d.create({counter: 100});
-    assert.deepStrictEqual(original, {counter: 100});
-    current = n3d.update(original, {counter: (v) => {
-        return v + 123;
-    }});
-    assert.deepStrictEqual(current, {counter: 223});
-});
-
-
-// this is new implementation which will replace current Nacht3D class
 test('StateManager', () => {
     const stateManager = new StateManager();
     let entity = stateManager.create({foo: 9});
@@ -316,60 +276,6 @@ test('Resolver', async () => {
 });
 
 
-
-test('update position', () => {
-    const { n3d } = initTest();
-    const mesh = n3d.create(Mesh(null, null, [0, 0, 0]));
-    assert.deepStrictEqual(mesh.position, new THREE.Vector3(0, 0, 0))
-    const updatedMesh = n3d.update(mesh, {
-        position: [3, 2.5, 1.5],
-    });
-    assert.strictEqual(updatedMesh, mesh);
-    assert.deepStrictEqual(mesh.position, new THREE.Vector3(3, 2.5, 1.5))
-});
-
-test('update color of material', () => {
-    const { n3d } = initTest();
-    const expectedColor = [0.6, 0.7, 0.8];
-    const material = n3d.create(Material('lambert'));
-    assert.notDeepStrictEqual(material.color, new THREE.Color(...expectedColor));
-    const updated = n3d.update(material, {
-        color: [...expectedColor],
-    });
-    assert.strictEqual(updated, material);
-    assert.deepStrictEqual(updated.color, new THREE.Color(...expectedColor));
-});
-
-
-test('update when should recreate object', () => {
-    const { n3d } = initTest();
-    {
-        let geometry = n3d.create(Cube());
-        assert.strictEqual(geometry.type, 'BoxGeometry');
-
-        const oldGeometry = geometry;
-        geometry = n3d.update(geometry, {
-            kind: 'sphere'
-        });
-        assert.notStrictEqual(oldGeometry, geometry);
-        assert.strictEqual(geometry.type, 'SphereGeometry');
-        assert.strictEqual('radius' in geometry.parameters, true);
-    }
-    {
-        const material = n3d.create(Material('basic', [0.5, 0.1, 0.2]));
-        assert.strictEqual(material.type, 'MeshBasicMaterial');
-        assert.deepStrictEqual(material.color, new THREE.Color(0.5, 0.1, 0.2));
-
-        n3d.update(material, {color: [0.7, 0.3, 0.12]}); // for checking if params are updated after update()
-
-        const newMaterial = n3d.update(material, {materialKind: 'lambert'});
-        assert.notStrictEqual(material, newMaterial);
-        assert.strictEqual(newMaterial.type, 'MeshLambertMaterial');
-        assert.deepStrictEqual(material.color, new THREE.Color(0.7, 0.3, 0.12));
-
-    }
-
-});
 
 test('createThreeObject(), camera', () => {
     const camera = createThreeObject(THREE, {
