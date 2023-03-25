@@ -36,6 +36,10 @@ export function createThreeObject(THREE, params) {
         }
         case 'camera':
             object = new THREE.PerspectiveCamera(params.fov, params.aspect);
+            break;
+        case 'renderer':
+            object = new THREE.WebGLRenderer();
+            break;
     }
     updateThreeObject(object, params);
     return object;
@@ -147,3 +151,10 @@ export function Scene(children) {
         children,
     };
 }
+
+export function Renderer() {
+    return {
+        kind: 'renderer',
+    };
+}
+
