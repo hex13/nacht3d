@@ -10,9 +10,8 @@ export function createThreeObject(THREE, params) {
             if (params.material) {
                 mesh.material = create(params.material);
             }
-
-            mesh.position.set(...params.position);
-            return mesh;
+            object = mesh;
+            break;
         }
         case 'cube':
             return new THREE.BoxGeometry(...params.size);
