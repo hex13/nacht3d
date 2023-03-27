@@ -15,7 +15,7 @@ test('Mesh()', () => {
 });
 
 test('Cube()', () => {
-    const geom = createThreeObject(THREE, Cube([2, 1, 0.5]));
+    const geom = createThreeObject(THREE, Cube({size: [2, 1, 0.5]}));
 
     assert.strictEqual(geom.isBufferGeometry, true);
     assert.strictEqual(geom.type, 'BoxGeometry');
@@ -30,7 +30,7 @@ test('Cube()', () => {
 });
 
 test('Sphere()', () => {
-    const geom = createThreeObject(THREE, Sphere(3, 4, 5));
+    const geom = createThreeObject(THREE, Sphere({radius: 3, widthSegments: 4, heightSegments: 5}));
 
     assert.strictEqual(geom.isBufferGeometry, true);
     assert.strictEqual(geom.type, 'SphereGeometry');
@@ -55,8 +55,8 @@ test('basic material', () => {
 
 test('Scene()', () => {
     const scene = createThreeObject(THREE, Scene([
-        Mesh(Cube([2, 3, 0.5]), Material('lambert'), [1, 2, 3]),
-        Mesh(Cube([2.1, 3.1, 1.5]), Material('lambert'), [4, 5, 6]),
+        Mesh(Cube({size: [2, 3, 0.5]}), Material('lambert'), [1, 2, 3]),
+        Mesh(Cube({size: [2.1, 3.1, 1.5]}), Material('lambert'), [4, 5, 6]),
     ]));
 
     assert.strictEqual(scene.children.length, 2);

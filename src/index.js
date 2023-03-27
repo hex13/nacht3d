@@ -119,7 +119,7 @@ export function Mesh(geometry, material, position) {
     };
 }
 
-export function Cube(size = [1, 1, 1]) {
+export function Cube({ size = [1, 1, 1] }) {
     return {
         kind: 'cube',
         size,
@@ -127,7 +127,7 @@ export function Cube(size = [1, 1, 1]) {
 }
 
 
-export function Sphere(radius = 1, widthSegments, heightSegments) {
+export function Sphere({ radius = 1, widthSegments, heightSegments }) {
     return {
         kind: 'sphere',
         radius,
