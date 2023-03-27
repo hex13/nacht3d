@@ -119,22 +119,20 @@ export function Mesh(geometry, material, position) {
     };
 }
 
-export function Cube({ size = [1, 1, 1] }) {
-    return {
-        kind: 'cube',
-        size,
-    };
-}
+const geometryKinds = {
+    Cube: {size: [1, 1, 1]},
+    Sphere: {radius: 1},
+};
 
+export const geometries = {};
 
-export function Sphere({ radius = 1, widthSegments, heightSegments }) {
-    return {
-        kind: 'sphere',
-        radius,
-        widthSegments,
-        heightSegments,
-    };
-}
+Object.entries(geometryKinds).forEach(([kind, defaultParams]) => {
+    geometries[kind] = (params) => ({
+        kind: kind.toLowerCase(),
+        ...defaultParams,
+        ...params,
+    })
+})
 
 export function Material(materialKind, color = [1, 1, 1]) {
     return {

@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import * as THREE from 'three';
-import { Mesh, Cube, Sphere, Scene, Material, StateManager, Resolver,
+import { Mesh, geometries, Scene, Material, StateManager, Resolver,
     createThreeObject, updateThreeObject,
 } from './src/index.js';
-
+const {Cube, Sphere} = geometries;
 
 test('Mesh()', () => {
     const mesh = createThreeObject(THREE, Mesh(null, null, [-10, -20, 30]));
